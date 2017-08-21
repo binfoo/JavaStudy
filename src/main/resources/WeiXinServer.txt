@@ -1,0 +1,4 @@
+{
+    WeiXinServerPort:7801,
+    WeiXinServerIP:"127.0.0.1"
+}
