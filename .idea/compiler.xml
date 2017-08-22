@@ -26,11 +26,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="JavaStudy" />
+        <module name="netty-demo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="JavaStudy" target="1.7" />
+      <module name="netty-demo" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
