@@ -1,10 +1,16 @@
 package redis2;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import thrift.weixin.DateUtil;
+import utils.DateUtils;
 
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,16 +109,6 @@ public class JedisUtil {
         return jedis;
     }
 
-    /**
-     * 释放redis实例到连接池.
-     *
-     * @param jedis redis实例
-     */
-    public void closeJedis(Jedis jedis, String ip, int port) {
-        if (jedis != null) {
-            getPool(ip, port).destroy();
-        }
-    }
 
 
     public static void main(String[] args) {
@@ -120,13 +116,34 @@ public class JedisUtil {
         int port = JedisUtil.redisConfig.RedisServerPort;
         Jedis jedis = JedisUtil.getInstance().getJedis(ip, port);
 
-        jedis.set("company","landleaf");
+//        jedis.set("company","landleaf");
+//
+//        System.out.println(jedis.get("company"));
 
-        System.out.println(jedis.get("company"));
 
-        JedisUtil.getInstance().closeJedis(jedis,ip,port);
+        DeviceBean deviceBean = new DeviceBean();
 
-        System.out.println(JedisUtil.getInstance().getClass().getName());
+        deviceBean.setDeviceId("aa:aa:aa:aa");
+        deviceBean.setVersion("2");
+        deviceBean.setState("在线");
+        deviceBean.setDescription("测试对象");
+        deviceBean.setCt(DateUtils.getNowTime());
+        deviceBean.setUt(DateUtils.getNowTime());
+
+
+        String json = JSON.toJSONString(deviceBean);
+
+        String key = "uponline_table";
+
+        jedis.hset(key,"uponline+1",json);
+
+
+        System.out.println(jedis.hget(key,"uponline+1"));
+
+
+//        System.out.println(JedisUtil.getInstance().getClass().getName());
+
+        
 
 
     }

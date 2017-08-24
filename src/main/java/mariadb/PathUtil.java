@@ -16,6 +16,9 @@ public class PathUtil
     public static void main(String[] args){
 
         getAbsProjectPath();
+        String a = "abcdeeef";
+
+        System.out.println(a.replace("e",""));
     }
 
 }

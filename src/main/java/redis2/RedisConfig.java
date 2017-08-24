@@ -19,6 +19,10 @@ public class RedisConfig {
 
     public int Timeout = 10000;
 
+    public int RetryNum = 5;
+
+    public String Password;//redis 登录密码
+
     public String getPassword() {
         return Password;
     }
@@ -97,7 +101,4 @@ public class RedisConfig {
         Timeout = timeout;
     }
 
-    public int RetryNum = 5;
-
-    public String Password;//redis 登录密码
 }
