@@ -16,6 +16,7 @@ public class TcpClient {
     private Socket socket;
     private RequestBean requestBean;
 
+
     public TcpClient() {
 
     }
@@ -28,43 +29,49 @@ public class TcpClient {
         if (port > 0) {
             this.port = port;
         }
+        this.requestBean = requestBean;
+    }
+
+
+    public void initConnect() {
 
         try {
-            this.socket = new Socket(this.host, this.port);
+            socket = new Socket(host, port);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        this.requestBean = requestBean;
 
     }
 
     public RequestBean start() {
 
+        initConnect();
+
 
         try {
             OutputStream outputStream = socket.getOutputStream();
-            PrintStream printStream = new PrintStream(outputStream);
 
             byte[] outBytes = LandleafUtils.getMsg(JSON.toJSONString(requestBean).getBytes("UTF-8"));
 
             System.out.println(JSON.toJSONString(requestBean));
             System.out.println(ByteBufUtil.hexDump(outBytes));
 
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(outputStream);
-
-            printStream.write(outBytes);
-            printStream.flush();
+            outputStream.write(outBytes);
             socket.shutdownOutput();//关闭输出流
-
 
             //接收数据
 
-            byte[] bytes = new byte[2048];
+            byte[] tempBytes = new byte[2048];
 
             InputStream inputStream = socket.getInputStream();
 
-            inputStream.read(bytes);
+
+            int len = inputStream.read(tempBytes);
+
+            byte[] bytes = new byte[len];
+
+            System.arraycopy(tempBytes, 0, bytes, 0, len);
 
 
             System.out.println(ByteBufUtil.hexDump(bytes));
@@ -73,10 +80,9 @@ public class TcpClient {
 
             System.out.println("jsonString:" + jsonString);
 
-//            requestBean = JSON.parseObject(jsonString, RequestBean.class);
+            requestBean = JSON.parseObject(jsonString, RequestBean.class);
 
             inputStream.close();
-            printStream.close();
             outputStream.close();
             socket.close();
 
@@ -100,9 +106,10 @@ public class TcpClient {
         requestBean.setTo(Constant.CLOUD);
         requestBean.setType(Constant.TYPE_APK_UPDATE);
         requestBean.setMsg(msg);
+        requestBean.setMsgAck(new MsgAck());
         requestBean.setApiAck(false);
 
-        TcpClient tcpClient = new TcpClient("127.0.0.1",-1,requestBean);
+        TcpClient tcpClient = new TcpClient("", 7777, requestBean);
 
         requestBean = tcpClient.start();
 
